@@ -530,7 +530,13 @@ int APS5_VABI sceAppContentGetAddcontInfoListByIroTag(uint32_t iroTag, AppConten
     if (!initialized.load()) return SCE_APP_CONTENT_ERROR_NOT_INITIALIZED;
     (void)iroTag;
     if ((!list || listNum == 0) && !hitNum) return SCE_APP_CONTENT_ERROR_PARAMETER;
-    if (hitNum) *hitNum = 0;
+    if (hitNum) {
+        const uint32_t count = 0;
+        const int savedErrno = errno;
+        const bool copied = GuestCopyOut_nid_no_patch(hitNum, &count, sizeof(count));
+        errno = savedErrno;
+        if (!copied) return SCE_APP_CONTENT_ERROR_PARAMETER;
+    }
     return 0;
 }
 
@@ -555,7 +561,11 @@ int APS5_VABI sceAppContentGetEntitlementKey(uint32_t serviceLabel, const NpUnif
 int APS5_VABI sceAppContentGetPftFlag(uint32_t* pftFlag) {
     if (!initialized.load()) return SCE_APP_CONTENT_ERROR_NOT_INITIALIZED;
     if (!pftFlag) return SCE_APP_CONTENT_ERROR_PARAMETER;
-    *pftFlag = 0;
+    const uint32_t flag = 0;
+    const int savedErrno = errno;
+    const bool copied = GuestCopyOut_nid_no_patch(pftFlag, &flag, sizeof(flag));
+    errno = savedErrno;
+    if (!copied) return SCE_APP_CONTENT_ERROR_PARAMETER;
     return 0;
 }
 

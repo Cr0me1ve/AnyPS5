@@ -386,6 +386,9 @@ int main() {
     Require(sceAppContentGetPftFlag(&pftFlag) == 0);
     Require(pftFlag == 0);
     Require(sceAppContentGetPftFlag(nullptr) == ErrorParameter);
+    errno = EBUSY;
+    Require(sceAppContentGetPftFlag(reinterpret_cast<std::uint32_t*>(std::uintptr_t{0x10})) == ErrorParameter);
+    Require(errno == EBUSY);
     AppContentEntitlementKey key;
     std::memset(&key, 0x5a, sizeof(key));
     const AppContentEntitlementKey untouchedKey = key;
@@ -480,6 +483,9 @@ int main() {
     Require(hitNum == 0);
     Require(sceAppContentGetAddcontInfoListByIroTag(1, reinterpret_cast<AppContentAddcontInfo*>(info), 1, nullptr) == 0);
     Require(std::memcmp(info, untouchedInfo, sizeof(info)) == 0);
+    errno = EBUSY;
+    Require(sceAppContentGetAddcontInfoListByIroTag(1, nullptr, 0, reinterpret_cast<std::uint32_t*>(std::uintptr_t{0x10})) == ErrorParameter);
+    Require(errno == EBUSY);
     Require(sceAppContentGetAddcontInfoListByIroTag(1, nullptr, 0, nullptr) == ErrorParameter);
     Require(sceAppContentGetAddcontInfoListByIroTag(1, reinterpret_cast<AppContentAddcontInfo*>(info), 0, nullptr) == ErrorParameter);
     Require(sceAppContentGetAddcontInfoListByIroTag(1, nullptr, 1, nullptr) == ErrorParameter);
